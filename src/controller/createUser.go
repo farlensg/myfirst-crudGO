@@ -6,7 +6,7 @@ import (
 	"github.com/farlensg/myfirst-crudGO/src/configuration/logger"
 	"github.com/farlensg/myfirst-crudGO/src/configuration/validation"
 	"github.com/farlensg/myfirst-crudGO/src/controller/model/request"
-	"github.com/farlensg/myfirst-crudGO/src/controller/model/response"
+	"github.com/farlensg/myfirst-crudGO/src/model"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -25,15 +25,20 @@ func CreateUser(c *gin.Context) {
 		c.JSON(errRest.Code, errRest)
 		return
 	}
-	response := response.UserResponse{
-		ID:    "test",
-		Email: userRequest.Email,
-		Name:  userRequest.Name,
-		Age:   userRequest.Age,
+
+	domain := model.NewUserDomain(
+		userRequest.Email,
+		userRequest.Password,
+		userRequest.Name,
+		userRequest.Age,
+	)
+	if err := domain.CreateUser(); err != nil {
+		c.JSON(err.Code, err)
+		return
 	}
 
 	logger.Info("User create successfully",
 		zap.String("journey", "createUser"))
 
-	c.JSON(http.StatusOK, response)
+	c.String(http.StatusOK, "")
 }

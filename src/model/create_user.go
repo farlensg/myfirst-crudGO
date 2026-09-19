@@ -8,5 +8,7 @@ import (
 
 func (ud *UserDomain) CreateUser() *rest_err.RestErr {
 	logger.Info("Init createUser model", zap.String("journey", "createUser"))
+	ud.EncryptPassword()
+	println(ud)
 	return nil
 }
