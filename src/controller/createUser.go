@@ -7,11 +7,12 @@ import (
 	"github.com/farlensg/myfirst-crudGO/src/configuration/validation"
 	"github.com/farlensg/myfirst-crudGO/src/controller/model/request"
 	"github.com/farlensg/myfirst-crudGO/src/model"
+	"github.com/farlensg/myfirst-crudGO/src/view"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
 
-func CreateUser(c *gin.Context) {
+func (uc *userControllerInterface) CreateUser(c *gin.Context) {
 	logger.Info("Init CreateUser controller",
 		zap.String("jorney", "createUser"),
 	)
@@ -32,7 +33,8 @@ func CreateUser(c *gin.Context) {
 		userRequest.Name,
 		userRequest.Age,
 	)
-	if err := domain.CreateUser(); err != nil {
+
+	if err := uc.service.CreateUser(domain); err != nil {
 		c.JSON(err.Code, err)
 		return
 	}
@@ -40,5 +42,7 @@ func CreateUser(c *gin.Context) {
 	logger.Info("User create successfully",
 		zap.String("journey", "createUser"))
 
-	c.String(http.StatusOK, "")
+	c.JSON(http.StatusOK, view.ConvertDomainToResponse(
+		domain,
+	))
 }
